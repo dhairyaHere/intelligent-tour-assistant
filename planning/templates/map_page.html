@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+	
+  <title>Trip Planner</title>
+
+  <script type="application/x-javascript">
+	addEventListener("load", function () {
+		setTimeout(hideURLbar, 0);
+	}, false);
+
+	function hideURLbar() {
+		window.scrollTo(0, 1);
+	}
+	
+	
+</script>
+<!--// Meta tag Keywords -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- pop up box -->
+<link href="{%static 'css/popuo-box.css' %}" rel="stylesheet" type="text/css" media="all" />
+<!-- //pop up box -->
+<link rel = "stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery.desoslide.css' %}">
+
+<!-- css files -->
+<!-- <link rel="stylesheet" href="css/bootstrap.css"> Bootstrap-Core-CSS -->
+<link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" media="all" /> <!-- Style-CSS --> 
+<link rel="stylesheet" href="{%static 'css/font-awesome.css' %}"> <!-- Font-Awesome-Icons-CSS -->
+<!-- //css files -->
+
+<link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}" />
+
+
+  <script src =  "https://maps.googleapis.com/maps/api/js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>    
+      <script type="text/javascript">
+	  var deleteplacelist = new Array();
+	  var addplacelist = new Array();
+	  var originplace = "";
+	  var destinationplace = "";
+         function loadMap() {
+			
+            var mapOptions = {
+               center:new google.maps.LatLng(19.373341, 78.662109),
+               zoom:7
+            }
+			
+            var map = new google.maps.Map(document.getElementById("sample"),mapOptions);
+			{% for obj in objects.response.groups.0.items %}
+			
+            var marker = new google.maps.Marker({
+               position: new google.maps.LatLng({{obj.venue.location.lat}},{{obj.venue.location.lng}}),
+               map: map,
+            });
+			{% endfor %}
+         }
+		 
+		 function setOriginPlace(value)
+		 {
+			originplace = value;
+			console.log(originplace);
+		 }
+		 
+		 function setLink(value)
+		 {
+			var orplace = originplace.replace(/\s/g,'%20');
+			var desplace = destinationplace.replace(/\s/g,'%20');
+		    var totallink = "https://www.google.com/maps/dir/?api=1&origin="+orplace+"&destination="+desplace+"&travelmode=driving";
+			console.log(totallink);
+			$("#linkformap"+value).attr("href",totallink);
+		 }
+		 
+		 
+		 function setDestinationPlace(value)
+		 {
+			destinationplace = value;
+		 }
+		 
+		 function Description(i)
+		 {
+			{% for i in list %}
+				console.log(" i : ",{{list.i}});
+			{% endfor %}
+		
+		 }
+		 
+		  function setOriginPlace(value)
+		 {
+			originplace = value;
+			console.log(originplace);
+		 }
+		 
+		 function setLink(value)
+		 {
+			var orplace = originplace.replace(/\s/g,'%20');
+			var desplace = destinationplace.replace(/\s/g,'%20');
+		    var totallink = "https://www.google.com/maps/dir/?api=1&origin="+orplace+"&destination="+desplace+"&travelmode=driving";
+			console.log(totallink);
+			$("#linkformap"+value).attr("href",totallink);
+		 }
+		 
+		 
+		 function setDestinationPlace(value)
+		 {
+			destinationplace = value;
+		 }
+
+		 
+		 function delete_place(r)
+		 {
+					console.log(r)
+					deleteplacelist.push(r)
+					$("#mr"+r).remove();
+					$("#span"+r).remove();
+					$("#spanline"+r).remove();
+
+					console.log("Dipesh : " + deleteplacelist+" span id = "+"span"+r);
+		 }
+		 var count = 0;
+		 
+		 function writeDate(r)
+		 {
+				//console.log("{{istart}}");
+				var currentdate = new Date("{{istart}}");
+				var nowdate = new Date();
+				nowdate.setDate(currentdate.getDate() + count);
+				count = count + 1;
+				document.getElementById("currentDate"+r).innerHTML = nowdate; 
+		 }
+		 
+		 function add_place(r)
+		 {
+		 
+					console.log(r)
+					addplacelist.push(r)
+					$("#card"+r).remove();
+					console.log("Dipesh : " + addplacelist)
+		 }
+		 
+		 function ShowList()
+		 {
+				//To assign the deleteplacelist
+				document.getElementById('deleteplacelist').value = deleteplacelist.toString();
+				document.getElementById('addplacelist').value = addplacelist.toString();
+		 }
+		
+		
+		</script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+ 
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body >
+
+
+<nav class="navbar navbar-expand-sm navbar-dark " style="height: 275px; background-image: url('/static/img/banner1.jpg'); background-repeat: no-repeat; background-size:cover;overflow: hidden; background-position: center; ">
+    <a class="navbar-brand" href="#" style="padding-left:15px;">
+        <img src="{%static 'img/logo.png'%}" alt="EP" style="width:100px;height: 80px;">
+    </a>
+    <h3 style="color: white; font-family:Verdana, Geneva, Tahoma, sans-serif; color: white; text-shadow: 5px 4px 10px #ffa31a; padding-top: 15px; font-weight: 900; ">
+      <b>ESCAPE</b> PLAN
+    </h3>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navb">
+       <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navb">
+        <ul class="navbar-nav mr-auto">
+
+        </ul>
+<!-- 
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-sm btn-outline-light" type="button"><i class='fa fa-search'
+                    aria-hidden='true'></i> &nbsp;<b>SEARCH</b></button>
+        </form> -->
+    </div>
+</nav>
+
+<!-- niche wala( blue ) header starts -->
+
+
+<nav class="navbar navbar-expand-sm  justify-content-center sticky-top"  style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); height:70px; background-color:white;">
+
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navb">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div class="collapse navbar-collapse justify-content-center" id="navb" >
+      <ul class="navbar-nav " style="margin-top:0px; ">
+          
+
+          <li class="nav-item " style="padding-left:35px;padding-top:40px;">
+              <a class="nav-link" href="/planning/home/" onmouseover ="this.style.color='black'" onmouseout ="this.style.color='#ffa31a'"   style="line-height: 55px;color:#ffa31a;cursor: pointer; "><b>HOME</b></a>
+          </li>
+          <li class="nav-item" style="padding-left:35px;padding-top:40px;">
+              <a  class="nav-link" href="/planning/myplans/" onmouseover ="this.style.color='black'" onmouseout ="this.style.color='#ffa31a'"   style=" line-height: 55px; color:#ffa31a;cursor: pointer; "><b> MY ITINERARIES </b></a>
+          </li>
+          
+
+          <a class="navbar-brand" href="#" style="padding-left:50px;">
+			<img src="{%static 'img/logo.png'%}" alt="EP" style="width:100px;height: 80px;">
+          </a>
+
+          <li class="nav-item" style="padding-left:26px;padding-top:40px;">
+              <a class="nav-link" href="/planning/about/" onmouseover ="this.style.color='black'" onmouseout ="this.style.color='#ffa31a'"   style=" line-height: 55px; color:#ffa31a;cursor: pointer; "><b>MEET OUR TEAM</b></a>
+          </li>
+          <li class="nav-item" style="padding-left:35px;padding-top:40px;">
+              <a class="nav-link" href="/planning/contact/" onmouseover ="this.style.color='black'" onmouseout ="this.style.color='#ffa31a'"   style=" line-height: 55px; color:#ffa31a;cursor: pointer; "><b>GET IN TOUCH</b></a>
+          </li>
+      </ul>
+  </div>
+    {% if request.session.username %}
+	<ul class="navbar-nav"  style="left:0;">
+      <li class="nav-item" id="signin" style="display: inline;">
+          <div class="btn-group" >				
+            <button type="button" class="btn btn-outline-dark dropdown-toggle" style="margin-top:5px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+        ><b>{{request.session.username}}</b></button>
+      
+          <div class="dropdown-menu pull-left"> 
+          <a class="dropdown-item" href="/planning/myaccount/">View Profile</a> 
+          <a class="dropdown-item" href="/planning/myplans/">My Plans</a> 
+          <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/planning/logout/">Logout</a> 
+          </div>
+        </div>
+      </li>
+    </ul>
+	{% else %}
+	<ul class="navbar-nav">
+        
+        <li class="nav-item" id="signin" style="display: inline;">
+          <div class="btn-group">				
+					  <button type="button" class="btn btn-outline-dark dropdown-toggle" style="margin-top:5px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+							 ><b>Sign In</b></button>
+						
+					<div class="dropdown-menu"> 
+					<a class="dropdown-item" href="/planning/login/">Log In</a> 
+					<div class="dropdown-divider"></div>
+
+					  <a class="dropdown-item" href="/planning/signup/">Don't have an account ?</a> 
+					</div>
+				  </div>
+        </li>
+    </ul>
+	{% endif %}
+    
+
+
+</nav>
+
+
+
+
+<!-- main content -->
+
+
+<!--  kai kaam nu nathi aa
+    <h1>{{pack_days}} DAYS IN {{city}}</h1>
+
+  <h4>Start Date:{{start}}</h4><br>
+  <h4>End Date:{{end}}</h4> -->
+
+
+
+<!-- <h4>PACKAGE : {{pack_days}}DAYS / {{pack_night}}NIGHTS </h4> -->
+
+
+<!--{% for a,b,c in list_a %}
+	
+	
+			{{a}} {{b}} {{c}}
+		
+	
+{% endfor %}-->  
+<!--{% for img,durstart,durend,rating in listabc %}
+{% for obj in objects.response.groups.0.items %}
+	
+		{%if forloop.counter == forloop.parentloop.counter%}
+			
+			 
+			  <div class="row">
+				
+				<div class="mine-row">
+				
+				
+					<img src="{{img}}" alt="xyz">
+						<div class="wine-text-container">
+					
+							
+							<h3><div>{{obj.venue.name}}</div></h3>
+							<b>VISITING TIME &nbsp;&nbsp;:  {{durstart}}   {{durend}} </b>
+							<br>
+							<div class="desc" id = "description"></div><br>
+							
+							<b>Ratings : {{rating}}</b>
+						</div>
+				</div>
+				
+			</div>
+			
+			
+		{%endif%}
+
+
+	{% endfor %}
+{% endfor %}-->
+
+<script>
+$(document).ready(function(){
+		$("#flip").click(function(){
+			$("#panel").slideToggle("slow");
+			$(this).css({"background-color":"black","color":"white"})
+		});
+		});
+$(document).ready(function(){
+	$("#custom").click(function(){
+		$(".column4").show();
+		$("#build").show();
+	});	
+});
+
+$(document).ready(function(){
+	$("#build").click(function(){
+		$(".column4").hide();
+		$("#build").hide();
+	});	
+});
+</script>
+
+
+<div class="container">
+<br><br>
+
+	<form action="planning/deletefunction/" method="post">
+      <div id="flip" class="mybold-text" title="Click for more options"><b>&nbsp;&nbsp;&nbsp;{{pack_days}} days in {{city}}</b>
+        <i class="fa fa-chevron-circle-down" aria-hidden="true" style="float:right; margin:8px;cursor: pointer;"></i>
+        <!-- <i class="fa fa-ellipsis-v" aria-hidden="true" style="float:right; margin:8px; cursor: pointer;" ></i>      -->
+	  <!-- {%csrf_token%} -->
+	  <button id="build" onClick= "ShowList()" name="show" value="show" class="btn btn-sm btn-outline-light" style="display:none; float:right;"> Build New Customized Itinenary </button>
+		<input type="hidden" name="customizedlist" id = "customizedlist" value='{{mainlist}}'>
+	  <input type="hidden" name="deleteplacelist" id = "deleteplacelist"  value="fruitsalad">
+	  <input type="hidden" name="addplacelist" id="addplacelist" value="fruitsalad">
+
+</form>
+	
+	
+</div>
+<div id="panel" style="text-align:center;">
+	
+	<form action="/planning/get/" method="post">
+	<input type="hidden" value="{{mainlist}}" name="gettrip">
+	<button class="btn btn-dark"> Download This Itinerary </button>&nbsp;&nbsp;&nbsp;<br><br>
+	</form>
+	<button class="btn btn-dark" id="custom"> Customize This Itinerary </button>&nbsp;&nbsp;&nbsp;
+	<form action="/planning/savetrip/" method="post">
+	<input type="hidden" name="places" value='{{mainlist}}'>
+	<input type="hidden" name="packdays" value='{{pack_days}}'>
+	<input type="hidden" name="city" value='{{city}}'>
+	<input type="hidden" name="end" value='{{end}}'>
+	<input type="hidden" name="start" value='{{start}}'>
+	<input type="hidden" name="pname" value='{{pname}}'>
+	<input type="hidden" name="paddress" value='{{paddress}}'>
+	<input type="hidden" name="pcategory" value='{{pcategory}}'>
+	<input type="hidden" name="pdistance" value='{{pdistance}}'>
+	<input type="hidden" name="category" value='{{category}}'>
+	<input type="hidden" name="radius" value='{{radius}}'><br>
+	<button class="btn btn-dark" onclick="window.alert('Your Itenerary is saved successfully.\nYou can view your saved itineraries in the MY ITINERARIES Section')"> Save This Itinerary </button>&nbsp;&nbsp;&nbsp;
+	</form>
+</div>
+<br>
+<b class="mybold-text">DAY BY DAY PLAN </b>
+<br><br>
+
+<div   style="text-align:center; padding-bottom:50px;">
+  <button style="text-align:center;" type="button" id="schedule" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+     <i class="fa fa-check"  aria-hidden="true"></i> <b><span id="schedule1" class="selection">Day By Day Plan</span><span class="caret"></span></b>
+  </button>
+  <ul class="dropdown-menu"  role="menu" style="text-align:center; padding-bottom:15px;" >
+      <li style="padding-bottom:3px;"> <a href="#" class="btn btn-default  btn-outline-light menuitems " id="dbd" > Day By Day Plan </a></li>
+      <li style="padding-bottom:3px;"> <form action="/planning/showmap/" method="post">
+			
+		<input type="hidden" name="city" value='{{city}}'>
+		<input type="hidden" name="end" value='{{end}}'>
+		<input type="hidden" name="start" value='{{start}}'>
+		<input type="hidden" name="category" value='{{category}}'>
+		<input type="hidden" name="radius" value='{{radius}}'>
+		<button class="btn btn-default  btn-outline-light menuitems ">Show Places on Map</button>
+		  </form></li>
+      <!-- <li style="padding:3px;"> <a href="#" class="btn btn-default  btn-outline-light menuitems"> place 3 </a></li> -->
+  </ul>
+  </div>
+
+
+<br>
+<b style="margin-bottom:0px; margin-left:40px; font-size:25px;">
+ {{city}}
+</b>
+<br>
+
+<!-- <div class="vl"></div> -->
+
+{% for obj in object %}
+<br>
+
+
+	{%if forloop.counter0|divisibleby:"5"%}
+ 
+	<p id="rcorners1"><b id = "currentDate{{forloop.counter}}" style="Vertical-align:middle;"></b></p>
+	
+	<script>
+		writeDate({{forloop.counter}});
+	</script>
+
+	{% endif %}
+	<span class="vl" id="span{{forloop.counter}}">
+	
+		<script>
+			setDestinationPlace("{{obj.p_name}}")
+		</script>
+
+
+		<div style="height:40px; margin-left:65px;" >
+			<i class="fa fa-car fa-2x"   aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;<a id= "linkformap{{forloop.counter}}" target = "_blank" href="https://www.google.com/maps/dir/?api=1&origin={{obj.p_name}}&destination={{obj.p_name}}&travelmode=driving" onclick = "setLink()" ><i>click here to view path in map</i></a>
+		</div>
+		
+		<script>
+			setLink({{forloop.counter}});
+			setOriginPlace("{{obj.place_name}}")
+		</script>
+	</span>
+  <span class="vl" id="spanline{{forloop.counter}}"></span>
+  
+		<div class="row" style="margin-top:0px;">
+		
+			<div class="mine-row" id="mr{{forloop.counter}}" style="margin-top:0px;">
+
+				<div class="column1">  </div>
+							
+				<div class="column2">
+					<img src="{{obj.p_imageURL}}"  style="vertical-align:middle; height:180px;"><br>
+					<button class="btn btn-dark" style="width:155px;"> Explore This Place </button>
+				</div>
+				<div class="column3">
+					<div class="wine-text-container">
+						
+						<!-- <button class="btn-primary" onClick="delete_place({{forloop.counter}})">DELETE</button> -->
+							
+							<h3><div>{{obj.place_name}}</div></h3>
+							<!---<div class="desc" id = "description"></div> <b>Ratings : {{obj.p_ratings}}</b>-->
+							
+							<br>
+							<div class="desc" id = "description"></div><br>
+							<b>ADDRESS : {{obj.place_address}}</b>
+							 
+							<b>Type  : {{obj.place_category}}</b>
+							<b>Distance : {{obj.place_distance}}</b><br><br>
+							
+					</div>
+				</div>	
+
+				<div class="column4" style="display:none;">
+					<button id="del" onClick="delete_place({{forloop.counter}})"><i class="fa fa-trash"  ></i></button>
+				</div>
+
+			</div>
+				
+		</div>
+			
+{% endfor %}
+
+{% for obj in mainlist %}
+<br>
+
+
+	{%if forloop.counter0|divisibleby:"5"%}
+ 
+	<p id="rcorners1"><b id = "currentDate{{forloop.counter}}" style="Vertical-align:middle;"></b></p>
+	
+	<script>
+		writeDate({{forloop.counter}});
+	</script>
+
+	{% endif %}
+	<span class="vl" id="span{{forloop.counter}}">
+	
+		<script>
+			setDestinationPlace("{{obj.p_name}}")
+		</script>
+
+
+		<div style="height:40px; margin-left:65px;" >
+			<i class="fa fa-car fa-2x"   aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;<a id= "linkformap{{forloop.counter}}" target = "_blank" href="https://www.google.com/maps/dir/?api=1&origin={{obj.p_name}}&destination={{obj.p_name}}&travelmode=driving" onclick = "setLink()" ><i>click here to view path on the map</i></a>
+		</div>
+		
+		<script>
+			setLink({{forloop.counter}});
+			setOriginPlace("{{obj.p_name}}")
+		</script>
+	</span>
+  <span class="vl" id="spanline{{forloop.counter}}"></span>
+  
+		<div class="row" style="margin-top:0px;">
+		
+			<div class="mine-row" id="mr{{forloop.counter}}" style="margin-top:0px;">
+
+				<div class="column1"></div>
+							
+				<div class="column2">
+					<img src="{{obj.p_imageURL}}"  style="vertical-align:middle; height:180px;"><br>
+					<button class="btn btn-dark" style="width:155px;"> Explore This Place </button>
+				</div>
+				<div class="column3">
+					<div class="wine-text-container">
+						
+						<!-- <button class="btn-primary" onClick="delete_place({{forloop.counter}})">DELETE</button> -->
+							
+							<h3><div>{{obj.p_name}}</div></h3>
+							<!-- <div class="desc" id = "description"></div> <b>Ratings : {{obj.p_ratings}}</b> -->
+							
+							<br>
+							<div class="desc" id = "description"></div><br>
+							<b>ADDRESS : {{obj.p_address}}</b>
+							 
+							<b>Type  : {{obj.p_categorytype}}</b>
+							<b>Distance : {{obj.p_distance}}</b><br><br>
+							
+					</div>
+				</div>	
+
+				<div class="column4" style="display:none;">
+					<button id="del" onClick="delete_place({{forloop.counter}})"><i class="fa fa-trash"  ></i></button>
+				</div>
+
+			</div>
+				
+		</div>
+			
+{% endfor %}
+
+<br><br><br>
+		<h3 style=" font-family:verdana; margin:2px; padding:2px; height:65px; vertical-align:middle;"><b>OTHER INTERESTING PLACES TO VISIT IN {{city}}</b></h3>
+		
+		<br><br>
+	<ul class="cards">			
+		{% for obj in suggestionList %}
+	
+    	<li class="cards_item"  id="card{{forloop.counter}}">
+      	<div class="card" style="width:300px;">
+        	<div class="card_image"><img class="imgCard" style="height:200px;" src="{{obj.p_imageURL}}"></div>
+        	<div class="card_content">
+          		<h2 class="card_title">{{obj.p_name}}</h2><b style=color:white;>Ratings : {{obj.p_ratings}}</b><br>
+          	<p class="card_text">
+			  <br>
+				<b>ADDRESS : {{obj.p_address}}</b><br>
+				
+				<b>Type  : {{obj.p_categorytype}}</b><br>
+				<b>Distance : {{obj.p_distance}}</b><br>
+			  </p>
+          	<button class="btnCard card_btn" onClick="add_place({{forloop.counter}})"><b>ADD TO ITINERARY</b></button>
+        	</div>
+      	</div>
+    	</li>
+	
+
+{% endfor %}
+</ul>
+
+</div>
+<!--
+<div class="row">
+  <div class="mine-row">
+    <img src="http://placehold.it/70x50">
+    <div class="wine-text-container">
+      <h3><div>PLACE 2</div></h3>
+      <div class="desc">The Taj Mahal  is an ivory-white marble mausoleum on the south bank of the Yamuna river in the Indian city of Agra. It was commissioned in 1632 by the Mughal emperor Shah Jahan (reigned from 1628 to 1658) to house the tomb of his favourite wife, Mumtaz Mahal; it also houses the tomb of Shah Jahan himself. The tomb is the centrepiece of a 17-hectare (42-acre) complex, which includes a mosque and a guest house, and is set in formal gardens bounded on three sides by a crenellated wall. </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="mine-row">
+    <img src="http://placehold.it/70x50">
+    <div class="wine-text-container">
+      <h3><div>PLACE 4</div></h3>
+      <div class="desc">The Taj Mahal  is an ivory-white marble mausoleum on the south bank of the Yamuna river in the Indian city of Agra. It was commissioned in 1632 by the Mughal emperor Shah Jahan (reigned from 1628 to 1658) to house the tomb of his favourite wife, Mumtaz Mahal; it also houses the tomb of Shah Jahan himself. The tomb is the centrepiece of a 17-hectare (42-acre) complex, which includes a mosque and a guest house, and is set in formal gardens bounded on three sides by a crenellated wall. </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="mine-row">
+    <img src="http://placehold.it/70x50">
+    <div class="wine-text-container">
+      <h3><div>PLACE 3</div></h3>
+      <div class="desc">The Taj Mahal  is an ivory-white marble mausoleum on the south bank of the Yamuna river in the Indian city of Agra. It was commissioned in 1632 by the Mughal emperor Shah Jahan (reigned from 1628 to 1658) to house the tomb of his favourite wife, Mumtaz Mahal; it also houses the tomb of Shah Jahan himself. The tomb is the centrepiece of a 17-hectare (42-acre) complex, which includes a mosque and a guest house, and is set in formal gardens bounded on three sides by a crenellated wall. </div>
+    </div>
+  </div>
+</div>
+-->
+<style>
+/* FOR DAY BY DAY PLAN MENU */
+#schedule{
+    border-radius: 25px;
+    content:justify;
+    width:250px;
+    height:50px;
+    color:white;
+    background-color:#ffa31a;
+    
+}
+
+.menuitems{
+    margin-left:25px;
+    border-radius: 25px;
+    
+    content:justify;
+    width:200px;
+    height:40px;
+    border:2px solid #ffa31a;
+    color:black;
+    background-color:white;
+    
+}
+.menuitems:hover{
+    border:2px solid #ffa31a;
+    color:white;
+    background-color:#ffa31a;
+    
+}
+
+#panel, #flip {
+  padding: 5px;
+  text-align: left;
+  background-color: #000000;
+	color:#ffffff;
+  border: solid 3px #000000;
+  cursor:pointer;
+}
+#flip:hover{
+	cursor:pointer;
+	background-color: #000000;
+	color:#ffffff;
+  border: solid 3px #000000;
+}
+#panel {
+  padding: 50px;
+  display: none;
+  background:#ffa31a;
+  opacity:0.8;
+}
+
+.imgCard {
+  height: auto;
+  /* max-width: 100%; */
+  /* width:auto; */
+  align-content:center;
+  vertical-align: middle;
+}
+
+.btnCard {
+  color: black;
+  padding: 0.8rem;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  font-weight: 400;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: white;
+  
+}
+
+.btnCard:hover {
+  background-color:black;
+  color:white;
+  border:2px solid white;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  
+}
+
+.cards_item {
+  display: flex;
+  padding: 1rem;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+}
+
+@media (min-width: 40rem) {
+  .cards_item {
+    width: 50%;
+  }
+}
+
+@media (min-width: 56rem) {
+  .cards_item {
+    width: 33.3333%;
+  }
+}
+
+.card {
+  background-color: white;
+  border-radius: 0.25rem;
+  box-shadow: 0 20px 40px -14px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);	
+border:1px solid black;	
+}
+
+.card_content {
+  padding: 1rem;
+  background: black;
+  height:250px;
+}
+
+.card_title {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: capitalize;
+  margin: 0px;
+}
+
+.card_text {
+  color: #ffffff;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;    
+  font-weight: 400;
+}
+
+
+/* upar wadu black rectangle */
+#rcorners1 {
+  border-radius: 25px;
+  background: #000000;
+   font-size:20px;
+  width: 200px;
+  height: 40px; 
+  color:white;
+  text-align:center;
+   
+}
+
+/* Trash Button mate */
+#del {
+	
+  background-color: black;
+  width:50px;
+	
+  border: none;
+  color: white;
+  padding: 12px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#del:hover {
+  background-color: white;
+  color:black;
+	border:2px solid black;
+}
+/* position of trash button maate */
+
+.column1 {
+  float: left;
+  width: 15%;
+  padding: 10px;
+  
+}
+.column2 {
+  float: left;
+  width: 25%;
+  padding: 10px;
+  text-align:center;
+  
+}
+.column3 {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  margin-left:20px;
+}
+.column4 {
+  float: left;
+  width: 10%;
+  padding: 10px;
+  
+}
+/* General bold text*/ 
+.mybold-text{
+	font-family:"verdana";
+	font-size: 22px;
+}
+/* Vertical Line */
+.vl {
+  border-left: 2px solid grey;
+  z-index:1;
+  position: relative;
+  margin-left:82px;
+  
+  width:3px;
+  top: 0;
+  opacity:1.0;
+  height:100px;
+}
+
+.home_bkg{
+	position: absolute;
+	top: 50%; 
+	left: 50%; 
+	transform: translate(-50%, -50%); 
+	font-family:verdana; 
+	color:white; 
+	text-shadow: 6px 6px 4px #000000;
+	white-space:nowrap;
+}
+img {
+  margin-top:30px;
+  margin-bottom:30px;
+  margin-right:10px;
+  margin-left: 5px;
+  width:250px;
+
+  /* height: 150px; */
+}
+#sample{
+  margin:0 auto;
+  border: 5px solid black;
+  padding:20px;
+  width:600px;
+  height:420px;
+}
+.mine-row {
+  display: flex;
+  flex-direction: row;
+  width:90%;
+  
+  padding: 10px 0;
+  margin: 25px auto;;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.wine-text-container {
+	z-index:0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 20px;
+  padding:20px;
+}
+.desc{
+	text-align: justify;
+  	width: 750px;
+}
+</style>
+</div>
+
+<!-- footer -->
+<footer class="py-5">
+	<div class="container py-md-3">
+		<div class="row footer-grids pb-md-5 pb-3">	
+			<div class="col-md-4 col-sm-4 col-6">
+				<a href="#"> <i class="fa fa-phone"></i>+91 926 532 4087</a>
+			</div>
+			<div class="col-md-4 col-sm-4 col-6">
+				<a href="#"> <i class="fa fa-envelope"></i>fstech@gmail.com</a>
+			</div>
+			<!-- <div class="col-md-3 col-sm-6 col-6 mt-md-0 mt-2">
+				<a href="#"> <i class="fa fa-skype"></i>Skype Call</a>
+			</div> -->
+			<div class="col-md-4 col-sm-4 col-6 mt-md-0 mt-2">
+				<a href="#"> <i class="fa fa-comment"></i>Talk In-Person</a>
+			</div>
+		</div>
+		
+		<div class="subscribe-grid text-center">
+			<p class="para three mt-4"> Everyone has a dream place to visit once in life, and many get the chance to fulfill their dream trip. 
+				Give us the oppurtunity to check your Bucket List one after another, and your soul will be satisfied. </p>
+			<h5>Even hell is worth a visit ;</h5>
+			<p>Time to get away</p>
+			
+		</div>
+	</div>
+</footer>
+<!-- //footer -->
+<section class="copyright py-4 text-center">
+	<div class="container">
+		<p>Copyright © 2020 Escape Plan. All Rights Reserved | Design by <a href="#" target="=_blank"> Fruit Salad Technologies Pvt. Ltd. </a></p>
+	</div>
+</section>
+
+
+
+
+</body>
+
+</html>
